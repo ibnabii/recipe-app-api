@@ -4,6 +4,8 @@ services:
   app:
     build:
       context: .          # build in current directory
+      args:
+        - DEV=true        # use DEV argument when running thorugh docker-compose
     ports:
       - "8000:8000"       # local:container
     volumes:

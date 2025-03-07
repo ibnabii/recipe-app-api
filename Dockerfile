@@ -11,12 +11,16 @@ ENV PYTHONUNBUFFERED=1
 # Commands
 # Copy requirements
 COPY ./requirements.txt /tmp/requirements.txt
+COPY ./requirements.dev.txt /tmp/requirements.dev.txt
 # Copy the django app directory
 COPY ./app /app
 # Default directory that all commands are going to be run from in docker image
 WORKDIR /app
 # Expose port 8000 in the container
 EXPOSE 8000
+
+# this argument will be overriden to true when running through docker-compose
+ARG DEV=false
 
 # Runs all commands on alpine image at once. Doing that line by line would add image layer for every single cmd.
 # This way keeps image light.
@@ -25,6 +29,7 @@ EXPOSE 8000
 #     conflicting with what we want to do here
 #   - upgrade pip
 #   - install requirements
+#   - if DEV is true - install also dev requirements
 #   - remove the /tmp directory - no extra dependencies, keeps image lean
 #   - add user - not to use root user
 #       -D		Don't assign a password
@@ -32,6 +37,9 @@ EXPOSE 8000
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     /py/bin/pip install -r /tmp/requirements.txt && \
+    if [ $DEV = "true" ]; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+    fi && \
     rm -rf /tmp && \
     adduser -D -H django-user
 
