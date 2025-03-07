@@ -1,0 +1,21 @@
+---
+name: Checks
+
+on: [push]                    # this will be triggered when code is pushed to github
+
+jobs:
+  test-lint:
+    name: Test and Lint       # this will be seen in GitHub interface
+    runs-on: ubuntu-20.04     # runner - OS that the jobs runs on, usually for python it's ubuntu (cheap :P)
+    steps:
+      - name: Login to Docker Hub                     # human-readable name seen in GH interface
+        uses: docker/login-action@v1                  # use another pre-made action, docker container and config
+        with:                                         # pass parameters to action
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v2   # checks our code out inside the job
+      - name: Test
+        run: docker compose run --rm app sh -c "python manage.py test"
+      - name: Lint
+        run: docker compose run --rm app sh -c "flake8"
