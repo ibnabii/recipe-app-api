@@ -28,19 +28,27 @@ ARG DEV=false
 #   - new virtual environment (arguable not necessary but in corner cases the alpine image might have dependencies
 #     conflicting with what we want to do here
 #   - upgrade pip
+#   - install posgresql-client (needed to connect to postgresql)
+#   - --virtual .file - virtual dependency package, to be removed later, packages are needed to build posgresql
+#       adapter
 #   - install requirements
 #   - if DEV is true - install also dev requirements
 #   - remove the /tmp directory - no extra dependencies, keeps image lean
+#   - remove the dependencies used to build psycopg
 #   - add user - not to use root user
 #       -D		Don't assign a password
 #       -H		Don't create home directory
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     adduser -D -H django-user
 
 # Update PATH were executables are run
