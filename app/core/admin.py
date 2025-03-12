@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 from core import models
 
+admin.site.register(models.Recipe)
+
 
 @admin.register(models.User)
 class UserAdmin(BaseUserAdmin):
