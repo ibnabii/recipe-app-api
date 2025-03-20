@@ -29,6 +29,7 @@ ARG DEV=false
 #     conflicting with what we want to do here
 #   - upgrade pip
 #   - install posgresql-client (needed to connect to postgresql)
+#   - install jpeg-dev (needed fgor Pillow)
 #   - --virtual .file - virtual dependency package, to be removed later, packages are needed to build posgresql
 #       adapter
 #   - install requirements
@@ -40,16 +41,22 @@ ARG DEV=false
 #       -H		Don't create home directory
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
-    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tmp-build-deps \
-        build-base postgresql-dev musl-dev && \
+        build-base postgresql-dev musl-dev zlib zlib-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
     apk del .tmp-build-deps && \
-    adduser -D -H django-user
+    adduser -D -H django-user && \
+    # add directories for media and statics
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    # change recursive owner of the directory
+    chown -R django-user:django-user /vol &&\
+    chmod -R 755 /vol
 
 # Update PATH were executables are run
 ENV PATH="/py/bin:$PATH"
