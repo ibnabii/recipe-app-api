@@ -2,8 +2,6 @@
 Serializers for recipe API.
 """
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from core.models import Recipe, Tag, Ingredient
@@ -106,7 +104,7 @@ class RecipeImageSerializer(serializers.ModelSerializer):
     """Serializer for uploading images to recipes."""
 
     #
-    # @extend_schema_field(OpenApiTypes.BINARY)  # Explicitly mark as file input
+    # @extend_schema_field(OpenApiTypes.BINARY) # Explicitly mark as file input
     # def get_image(self, obj):
     #     return obj.image
 
