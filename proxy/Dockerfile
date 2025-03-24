@@ -1,4 +1,4 @@
-FROM nginxinc/nginx-unprivileged:1-alpine
+FROM nginxinc/nginx-unprivileged:stable-alpine-slim
 LABEL maintainer="nobody@nowhere.com"
 
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl

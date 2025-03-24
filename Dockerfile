@@ -1,5 +1,5 @@
 # Specific alpine version for compatibility with the course
-FROM python:3.9-alpine3.13
+FROM python:3.13-alpine3.21
 
 # Who maintains this image?
 LABEL maintainer="won't tell you"
